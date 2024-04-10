@@ -19,13 +19,20 @@ The core functionality of PromptVault revolves around the `BaseTemplate` class, 
 from PromptVault.template import BaseTemplate
 
 # Define a template with placeholders
-template_str = "Hello, {name}! Welcome to {place}."
+template_str = """You are a friendly AI assitent tasked with answering question from users.
+
+User name: {name}
+
+Question: [question]
+
+Response:
+"""
 
 # Create a BaseTemplate instance
 template = BaseTemplate(template=template_str)
 
 # Generate a prompt by providing values for the placeholders
-prompt = template.to_prompt(name="Alice", place="Wonderland")
+prompt = template.to_prompt(name="Alice", question="What is the weather?")
 
 print(prompt)
 ```
@@ -33,7 +40,13 @@ print(prompt)
 This will output:
 
 ```
-Hello, Alice! Welcome to Wonderland.
+You are a friendly AI assitent tasked with answering question from users.
+
+User name: Alice
+
+Question: What is the weather?
+
+Response:
 ```
 
 ## Features
