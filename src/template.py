@@ -31,12 +31,21 @@ class BaseTemplate:
 
     @classmethod
     def from_json(cls, json_str: str):
+        """Creates an instance of the class from a JSON string, dynamically handling the class name."""
         data = json.loads(json_str)
-        target_class = globals()[data['class_name']]
-        return target_class(**data)
+        class_name = data.pop('class_name', None)  # Remove and retrieve the class name
+        if class_name and class_name in globals():
+            target_class = globals()[class_name]
+            if issubclass(target_class, cls):  # Ensure it's a subclass of BaseTemplate
+                return target_class(**data)
+        raise ValueError(f"Invalid or missing class_name in JSON: {class_name}")
+
 
     def to_json(self) -> str:
-        return json.dumps(asdict(self), indent=2)
+        """Serializes the instance to a JSON string, including the class name dynamically."""
+        data = asdict(self)  # Convert all dataclass fields to a dictionary
+        data['class_name'] = self.__class__.__name__  # Dynamically add the class name
+        return json.dumps(data, indent=2)
 
     @property
     def variables(self) -> list:
