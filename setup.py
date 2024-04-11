@@ -13,7 +13,7 @@ setup(
     packages=find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: MIT License',
+        'License :: OSI Approved :: Apache License',
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',

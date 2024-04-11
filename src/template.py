@@ -94,22 +94,12 @@ class BaseTemplate:
             json_str = file.read()
         return cls.from_json(json_str)
 
-
-
     def update_version(self, major=False, minor=False, patch=True):
-        """
-        Update the version of the template.
-
-        Args:
-            major (bool): If True, increment the major version number.
-            minor (bool): If True, increment the minor version number.
-            patch (bool): If True, increment the patch version number (default).
-
-        Returns:
-            None
-        """
-        major_num, minor_num, patch_num = map(int, self.version.split('.'))
-
+        version_parts = self.version.split('.')
+        major_num = int(version_parts[0])
+        minor_num = int(version_parts[1]) if len(version_parts) > 1 else 0
+        patch_num = int(version_parts[2]) if len(version_parts) > 2 else 0
+        
         if major:
             major_num += 1
             minor_num = 0
@@ -119,7 +109,6 @@ class BaseTemplate:
             patch_num = 0
         elif patch:
             patch_num += 1
-
-        self.version = f"{major_num}.{minor_num}.{patch_num}"
-
+        
+        self.version = f"{major_num}.{minor_num}"
 

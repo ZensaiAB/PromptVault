@@ -1,3 +1,4 @@
+import os
 from abc import ABC, abstractmethod
 
 class Vault(ABC):
