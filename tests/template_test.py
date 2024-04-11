@@ -1,7 +1,11 @@
 import pytest
-from src.template import BaseTemplate
-import json
-import os
+from src.template import BaseTemplate, TemplateRegistry, register_template
+from dataclasses import dataclass
+
+@register_template
+@dataclass
+class PromptTest(BaseTemplate):
+    extra_field: str = "Extra Data"
 
 # Fixture for reusable BaseTemplate instance
 @pytest.fixture
@@ -46,3 +50,23 @@ def test_save_load_file(tmp_path, sample_template):
     assert loaded_template.template == sample_template.template
     assert loaded_template.version == sample_template.version
     assert loaded_template.class_name == sample_template.class_name
+
+
+# Fixture for reusable PromptTest instance
+@pytest.fixture
+def test_prompt():
+    return PromptTest(template="Hello, {name}!")
+
+# Test that the class is correctly registered
+def test_class_registration():
+    registered_class = TemplateRegistry.get_class('PromptTest')
+    assert registered_class is PromptTest
+
+def test_subclass_json_serialization(test_prompt):
+    json_str = test_prompt.to_json()
+    print(json_str)
+    loaded_prompt = PromptTest.from_json(json_str)
+    assert isinstance(loaded_prompt, PromptTest)
+    assert loaded_prompt.template == "Hello, {name}!"
+    assert loaded_prompt.extra_field == "Extra Data"
+    assert loaded_prompt.class_name == "PromptTest"

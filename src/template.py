@@ -1,7 +1,26 @@
-from dataclasses import dataclass, field, asdict
+
+from dataclasses import dataclass, field, asdict, fields
 import json
 import re
 
+def register_template(cls):
+    """Decorator to register template classes in the TemplateRegistry."""
+    TemplateRegistry.register_class(cls)
+    return cls
+
+class TemplateRegistry:
+    registry = {}
+
+    @classmethod
+    def register_class(cls, template_class):
+        cls.registry[template_class.__name__] = template_class
+
+    @classmethod
+    def get_class(cls, class_name):
+        print(f"Looking for class: {class_name}, available: {list(cls.registry.keys())}")
+        return cls.registry.get(class_name)
+
+@register_template
 @dataclass
 class BaseTemplate:
     template: str = field(default_factory=str)
@@ -31,20 +50,33 @@ class BaseTemplate:
 
     @classmethod
     def from_json(cls, json_str: str):
-        """Creates an instance of the class from a JSON string, dynamically handling the class name."""
         data = json.loads(json_str)
-        class_name = data.pop('class_name', None)  # Remove and retrieve the class name
-        if class_name and class_name in globals():
-            target_class = globals()[class_name]
-            if issubclass(target_class, cls):  # Ensure it's a subclass of BaseTemplate
-                return target_class(**data)
-        raise ValueError(f"Invalid or missing class_name in JSON: {class_name}")
+        class_name = data.pop('class_name', None)
+        if not class_name:
+            raise ValueError("JSON must contain 'class_name'")
+        target_class = TemplateRegistry.get_class(class_name)
+        if target_class is None:
+            print(f"Warning: Template class '{class_name}' not found in the registry. Using BaseTemplate.")
+            target_class = BaseTemplate
 
+        # Handle field attributes separately
+        field_data = {}
+        for field in fields(target_class):
+            if field.name in data:
+                field_data[field.name] = data.pop(field.name)
+
+        # Create the instance with the remaining data
+        instance = target_class(**data)
+
+        # Set the field attributes
+        for name, value in field_data.items():
+            setattr(instance, name, value)
+
+        return instance
 
     def to_json(self) -> str:
-        """Serializes the instance to a JSON string, including the class name dynamically."""
-        data = asdict(self)  # Convert all dataclass fields to a dictionary
-        data['class_name'] = self.__class__.__name__  # Dynamically add the class name
+        data = asdict(self)
+        data['class_name'] = self.__class__.__name__
         return json.dumps(data, indent=2)
 
     @property
@@ -61,3 +93,33 @@ class BaseTemplate:
         with open(file_path, "r") as file:
             json_str = file.read()
         return cls.from_json(json_str)
+
+
+
+    def update_version(self, major=False, minor=False, patch=True):
+        """
+        Update the version of the template.
+
+        Args:
+            major (bool): If True, increment the major version number.
+            minor (bool): If True, increment the minor version number.
+            patch (bool): If True, increment the patch version number (default).
+
+        Returns:
+            None
+        """
+        major_num, minor_num, patch_num = map(int, self.version.split('.'))
+
+        if major:
+            major_num += 1
+            minor_num = 0
+            patch_num = 0
+        elif minor:
+            minor_num += 1
+            patch_num = 0
+        elif patch:
+            patch_num += 1
+
+        self.version = f"{major_num}.{minor_num}.{patch_num}"
+
+
