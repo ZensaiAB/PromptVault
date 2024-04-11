@@ -2,15 +2,18 @@ import pytest
 from src.template import BaseTemplate, TemplateRegistry, register_template
 from dataclasses import dataclass
 
+
 @register_template
 @dataclass
 class PromptTest(BaseTemplate):
     extra_field: str = "Extra Data"
 
+
 # Fixture for reusable BaseTemplate instance
 @pytest.fixture
 def sample_template():
     return BaseTemplate(template="Hello, {name}!")
+
 
 # Test initialization and attribute correctness
 def test_initialization():
@@ -19,9 +22,11 @@ def test_initialization():
     assert bt.version == "1.1"
     assert bt.class_name == "BaseTemplate"
 
+
 # Test successful prompt generation
 def test_to_prompt_success(sample_template):
     assert sample_template.to_prompt(name="Alice") == "Hello, Alice!"
+
 
 # Test handling missing required variables
 def test_to_prompt_missing_variable(sample_template):
@@ -29,9 +34,11 @@ def test_to_prompt_missing_variable(sample_template):
         sample_template.to_prompt()
     assert "Missing required arguments for template placeholders" in str(e.value)
 
+
 # Test the extraction of variables
 def test_variables_extraction(sample_template):
-    assert sample_template.variables == ['name']
+    assert sample_template.variables == ["name"]
+
 
 # Test JSON serialization and deserialization
 def test_json_serialization():
@@ -41,6 +48,7 @@ def test_json_serialization():
     assert new_bt.template == "Goodbye, {name}."
     assert new_bt.version == "1.2"
     assert new_bt.class_name == "BaseTemplate"
+
 
 # Test saving to and loading from a file
 def test_save_load_file(tmp_path, sample_template):
@@ -57,10 +65,12 @@ def test_save_load_file(tmp_path, sample_template):
 def test_prompt():
     return PromptTest(template="Hello, {name}!")
 
+
 # Test that the class is correctly registered
 def test_class_registration():
-    registered_class = TemplateRegistry.get_class('PromptTest')
+    registered_class = TemplateRegistry.get_class("PromptTest")
     assert registered_class is PromptTest
+
 
 def test_subclass_json_serialization(test_prompt):
     json_str = test_prompt.to_json()

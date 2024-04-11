@@ -4,10 +4,12 @@ import pytest
 from src.template import BaseTemplate
 from src.vault import get_template, save_template, list_templates
 
+
 @pytest.fixture
 def setup_env(tmpdir):
     os.environ["VAULT_TYPE"] = "local"
     os.environ["VAULT_PATH"] = str(tmpdir)
+
 
 def test_save_and_get_template(setup_env):
     template = BaseTemplate(template="Hello, {name}!")
@@ -16,6 +18,7 @@ def test_save_and_get_template(setup_env):
     loaded_template = get_template("BaseTemplate")
     assert loaded_template.template == "Hello, {name}!"
     assert loaded_template.version == "1.0"
+
 
 def test_get_template_with_version(setup_env):
     template1 = BaseTemplate(template="Hello, {name}!")
@@ -29,6 +32,7 @@ def test_get_template_with_version(setup_env):
     assert loaded_template.template == "Hello, {name}! How are you?"
     assert loaded_template.version == "1.1"
 
+
 def test_list_templates(setup_env):
     template1 = BaseTemplate(template="Hello, {name}!")
     save_template(template1)
@@ -38,9 +42,11 @@ def test_list_templates(setup_env):
     templates = list_templates()
     assert templates == [("BaseTemplate", ["1.0", "1.1"])]
 
+
 def test_get_nonexistent_template(setup_env):
     with pytest.raises(FileNotFoundError):
         get_template("NonexistentTemplate")
+
 
 def test_get_nonexistent_version(setup_env):
     template = BaseTemplate(template="Hello, {name}!")

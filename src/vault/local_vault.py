@@ -4,6 +4,7 @@ import json
 from src.vault.vault import Vault
 from src.template import BaseTemplate, TemplateRegistry
 
+
 class LocalVault(Vault):
     def __init__(self, vault_path):
         self.vault_path = vault_path
@@ -25,27 +26,35 @@ class LocalVault(Vault):
     def load(self, template_name, version=None):
         template_dir = os.path.join(self.vault_path, template_name)
         if not os.path.exists(template_dir):
-            raise FileNotFoundError(f"Template '{template_name}' not found in the vault.")
-        
+            raise FileNotFoundError(
+                f"Template '{template_name}' not found in the vault."
+            )
+
         if version is None:
             versions = [f[:-5] for f in os.listdir(template_dir) if f.endswith(".json")]
             if not versions:
-                raise FileNotFoundError(f"No versions found for template '{template_name}'.")
+                raise FileNotFoundError(
+                    f"No versions found for template '{template_name}'."
+                )
             version = max(versions)
-        
+
         file_name = f"{version}.json"
         file_path = os.path.join(template_dir, file_name)
         if not os.path.exists(file_path):
-            raise FileNotFoundError(f"Version '{version}' not found for template '{template_name}'.")
-        
+            raise FileNotFoundError(
+                f"Version '{version}' not found for template '{template_name}'."
+            )
+
         with open(file_path, "r") as file:
             json_str = file.read()
-        
+
         template_class = TemplateRegistry.get_class(template_name)
         if template_class is None:
-            print(f"Warning: Template class '{template_name}' not found in the registry. Using BaseTemplate.")
+            print(
+                f"Warning: Template class '{template_name}' not found in the registry. Using BaseTemplate."
+            )
             template_class = BaseTemplate
-        
+
         return template_class.from_json(json_str)
 
     def list_templates(self):
@@ -53,6 +62,8 @@ class LocalVault(Vault):
         for template_name in os.listdir(self.vault_path):
             template_dir = os.path.join(self.vault_path, template_name)
             if os.path.isdir(template_dir):
-                versions = [f[:-5] for f in os.listdir(template_dir) if f.endswith(".json")]
+                versions = [
+                    f[:-5] for f in os.listdir(template_dir) if f.endswith(".json")
+                ]
                 templates.append((template_name, versions))
         return templates

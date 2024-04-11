@@ -1,12 +1,13 @@
-
 from dataclasses import dataclass, field, asdict, fields
 import json
 import re
+
 
 def register_template(cls):
     """Decorator to register template classes in the TemplateRegistry."""
     TemplateRegistry.register_class(cls)
     return cls
+
 
 class TemplateRegistry:
     registry = {}
@@ -17,8 +18,11 @@ class TemplateRegistry:
 
     @classmethod
     def get_class(cls, class_name):
-        print(f"Looking for class: {class_name}, available: {list(cls.registry.keys())}")
+        print(
+            f"Looking for class: {class_name}, available: {list(cls.registry.keys())}"
+        )
         return cls.registry.get(class_name)
+
 
 @register_template
 @dataclass
@@ -38,25 +42,31 @@ class BaseTemplate:
 
         if missing_variables:
             # Inform the user about the missing variables
-            raise ValueError(f"Missing required arguments for template placeholders: {', '.join(missing_variables)}.\n"
-                            f"Expected variables are: {', '.join(required_variables)}.")
+            raise ValueError(
+                f"Missing required arguments for template placeholders: {', '.join(missing_variables)}.\n"
+                f"Expected variables are: {', '.join(required_variables)}."
+            )
 
         try:
             return self.template.format(**kwargs)
         except KeyError as e:
             # This handles cases where there's a typo or mismatch in variable names,
             # though it should be largely preempted by the above check.
-            raise ValueError(f"An error occurred with the provided arguments: {e}.") from e
+            raise ValueError(
+                f"An error occurred with the provided arguments: {e}."
+            ) from e
 
     @classmethod
     def from_json(cls, json_str: str):
         data = json.loads(json_str)
-        class_name = data.pop('class_name', None)
+        class_name = data.pop("class_name", None)
         if not class_name:
             raise ValueError("JSON must contain 'class_name'")
         target_class = TemplateRegistry.get_class(class_name)
         if target_class is None:
-            print(f"Warning: Template class '{class_name}' not found in the registry. Using BaseTemplate.")
+            print(
+                f"Warning: Template class '{class_name}' not found in the registry. Using BaseTemplate."
+            )
             target_class = BaseTemplate
 
         # Handle field attributes separately
@@ -76,7 +86,7 @@ class BaseTemplate:
 
     def to_json(self) -> str:
         data = asdict(self)
-        data['class_name'] = self.__class__.__name__
+        data["class_name"] = self.__class__.__name__
         return json.dumps(data, indent=2)
 
     @property
@@ -95,11 +105,11 @@ class BaseTemplate:
         return cls.from_json(json_str)
 
     def update_version(self, major=False, minor=False, patch=True):
-        version_parts = self.version.split('.')
+        version_parts = self.version.split(".")
         major_num = int(version_parts[0])
         minor_num = int(version_parts[1]) if len(version_parts) > 1 else 0
         patch_num = int(version_parts[2]) if len(version_parts) > 2 else 0
-        
+
         if major:
             major_num += 1
             minor_num = 0
@@ -109,6 +119,5 @@ class BaseTemplate:
             patch_num = 0
         elif patch:
             patch_num += 1
-        
-        self.version = f"{major_num}.{minor_num}"
 
+        self.version = f"{major_num}.{minor_num}"

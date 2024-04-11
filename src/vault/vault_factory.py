@@ -1,6 +1,7 @@
 import os
 from src.vault.local_vault import LocalVault
 
+
 def create_vault():
     vault_type = os.getenv("VAULT_TYPE", "local")
     if vault_type == "local":
