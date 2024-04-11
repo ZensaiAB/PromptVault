@@ -15,13 +15,15 @@ This program provides a convenient way to manage and version prompt templates fo
 
 1. Clone the repository:
    ```
-   git clone https://github.com/your-username/prompt-template-management.git
+   git clone https://github.com/ZensaiAB/PromptValut.git
    ```
 
-2. Install the required dependencies:
+2. Install the package:
    ```
-   pip install -r requirements.txt
+   pip install .
    ```
+
+   This will install the `PromptVault` package and its dependencies.
 
 ## Usage
 
@@ -30,7 +32,7 @@ This program provides a convenient way to manage and version prompt templates fo
 To create a new prompt template, you can use the `BaseTemplate` class or define your own custom template class. Here's an example:
 
 ```python
-from src.template import BaseTemplate
+from promptvault.template import BaseTemplate
 
 template = BaseTemplate(template="Hello, {name}! How can I assist you today?")
 ```
@@ -40,7 +42,7 @@ template = BaseTemplate(template="Hello, {name}! How can I assist you today?")
 To save a prompt template to the vault, use the `save_template` function. You can optionally specify a `vault_folder` to organize templates into different folders:
 
 ```python
-from src.template_utils import save_template
+from promptvault.template_utils import save_template
 
 save_template(template)  # Save to the default location
 save_template(template, vault_folder="chatbot_templates")  # Save to a specific folder
@@ -51,7 +53,7 @@ save_template(template, vault_folder="chatbot_templates")  # Save to a specific 
 To retrieve a prompt template from the vault, use the `get_template` function. You can specify the template name, version, and optional folder:
 
 ```python
-from src.template_utils import get_template
+from promptvault.template_utils import get_template
 
 retrieved_template = get_template("BaseTemplate")
 retrieved_template = get_template("BaseTemplate", version="1.0")
@@ -73,7 +75,7 @@ template.update_version(patch=True)  # Increment patch version (default)
 To list all available prompt templates in the vault, use the `list_templates` function:
 
 ```python
-from src.template_utils import list_templates
+from promptvault.template_utils import list_templates
 
 templates = list_templates()
 print(templates)
@@ -84,7 +86,7 @@ print(templates)
 You can create new types of prompt templates by extending the `BaseTemplate` class. Define a new class that inherits from `BaseTemplate` and customize the `template` attribute or add any additional attributes or methods specific to that template type:
 
 ```python
-from src.template import BaseTemplate
+from promptvault.template import BaseTemplate
 
 class TemplateTest(BaseTemplate):
     template = "Hello, {name}!"
