@@ -1,5 +1,4 @@
-from .local_vault import LocalVault
-from .template_utils import get_template, save_template, list_templates
+from src.vault.local_vault import LocalVault
 from dotenv import load_dotenv
 import os
 
