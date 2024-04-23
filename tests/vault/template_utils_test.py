@@ -2,7 +2,7 @@
 import os
 import pytest
 from src.template import BaseTemplate
-from src.vault import get_template, save_template, list_templates
+from src.template_utils import get_template, save_template, list_templates
 
 
 @pytest.fixture

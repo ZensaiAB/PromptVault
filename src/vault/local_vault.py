@@ -11,23 +11,23 @@ class LocalVault(Vault):
         os.makedirs(self.vault_path, exist_ok=True)
 
     def save(self, template, vault_folder=None):
-        template_name = template.class_name
         version = template.version
         if vault_folder:
-            template_dir = os.path.join(vault_folder, template_name)
+            template_name = vault_folder
         else:
-            template_dir = os.path.join(self.vault_path, template_name)
+            template_name = template.class_name
+        template_dir = os.path.join(self.vault_path, template_name)
         os.makedirs(template_dir, exist_ok=True)
         file_name = f"{version}.json"
         file_path = os.path.join(template_dir, file_name)
+        if os.path.isfile(file_path):
+            file_name = f"{template.update_version()}.json"
+            file_path = os.path.join(template_dir, file_name)
         with open(file_path, "w") as file:
             file.write(template.to_json())
 
-    def load(self, template_name, version=None, vault_folder=None):
-        if vault_folder:
-            template_folder = vault_folder
-        else:
-            template_folder = self.vault_path
+    def load(self, template_name, version=None):
+        template_folder = self.vault_path
         template_dir = os.path.join(template_folder, template_name)
 
         if not os.path.exists(template_dir):
@@ -61,12 +61,9 @@ class LocalVault(Vault):
 
         return template_class.from_json(json_str)
 
-    def list_templates(self, vault_folder=None):
+    def list_templates(self):
         templates = []
-        if vault_folder:
-            template_folder = vault_folder
-        else:
-            template_folder = self.vault_path
+        template_folder = self.vault_path
         for template_name in os.listdir(template_folder):
             template_dir = os.path.join(template_folder, template_name)
             if os.path.isdir(template_dir):

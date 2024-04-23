@@ -21,13 +21,13 @@ class TemplateRegistry:
     @classmethod
     def get_class(cls, class_name):
         return cls.registry.get(class_name)
-
+    
 @register_template
 @dataclass
 class BaseTemplate:
 
     template: str = field(default_factory=str)
-    version: str = "1.0.0"  # Default version
+    version: str = "1.0"  # Default version
     class_name: str = field(init=False)
 
 
@@ -38,6 +38,8 @@ class BaseTemplate:
 
     def __post_init__(self):
         self.class_name = self.__class__.__name__
+
+
     def to_prompt(self, **kwargs) -> str:
         """Generates the final prompt by dynamically inserting provided keyword arguments into the template."""
         # Check if all required variables are present in kwargs
@@ -114,11 +116,11 @@ class BaseTemplate:
             json_str = file.read()
         return cls.from_json(json_str)
 
-    def update_version(self, major=False, minor=False, patch=True):
+    def update_version(self, major=False, minor=True):# , patch=True):
         version_parts = self.version.split(".")
         major_num = int(version_parts[0])
         minor_num = int(version_parts[1]) if len(version_parts) > 1 else 0
-        patch_num = int(version_parts[2]) if len(version_parts) > 2 else 0
+        # patch_num = int(version_parts[2]) if len(version_parts) > 2 else 0
 
         if major:
             major_num += 1
@@ -127,7 +129,7 @@ class BaseTemplate:
         elif minor:
             minor_num += 1
             patch_num = 0
-        elif patch:
-            patch_num += 1
+        # elif patch:
+        #     patch_num += 1
 
-        self.version = f"{major_num}.{minor_num}.{patch_num}"
+        self.version = f"{major_num}.{minor_num}"
