@@ -15,10 +15,13 @@ This program provides a convenient way to manage and version prompt templates fo
 
 1. Clone the repository:
    ```
-   git clone https://github.com/ZensaiAB/PromptValut.git
+   git clone https://github.com/ZensaiAB/PromptVault.git
    ```
-
-2. Install the package:
+2. Change directory:
+   ```
+   cd promptvault
+   ```
+3. Install the package:
    ```
    pip install .
    ```

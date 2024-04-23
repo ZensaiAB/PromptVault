@@ -1,4 +1,4 @@
-from src.vault.local_vault import LocalVault
+from .local_vault import LocalVault
 from dotenv import load_dotenv
 import os
 
