@@ -29,7 +29,7 @@ class TemplateRegistry:
 class BaseTemplate:
 
     template: str = field(default_factory=str)
-    version: str = "1.0"  # Default version
+    version: str = "1.0.0"  # Default version
     class_name: str = field(init=False)
 
 
@@ -132,4 +132,4 @@ class BaseTemplate:
         elif patch:
             patch_num += 1
 
-        self.version = f"{major_num}.{minor_num}"
+        self.version = f"{major_num}.{minor_num}.{patch_num}"
