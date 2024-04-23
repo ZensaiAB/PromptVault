@@ -3,7 +3,6 @@ from string import Template
 import json
 import re
 
-
 def register_template(cls):
     """Decorator to register template classes in the TemplateRegistry."""
     TemplateRegistry.register_class(cls)
@@ -22,7 +21,6 @@ class TemplateRegistry:
     @classmethod
     def get_class(cls, class_name):
         return cls.registry.get(class_name)
-
 
 @register_template
 @dataclass
