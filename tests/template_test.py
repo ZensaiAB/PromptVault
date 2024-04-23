@@ -1,5 +1,5 @@
 import pytest
-from src.template import BaseTemplate, TemplateRegistry, register_template
+from promptvault.template import BaseTemplate, TemplateRegistry, register_template
 from dataclasses import dataclass
 
 

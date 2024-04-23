@@ -12,7 +12,6 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ZensaiAB/PromptVault",
-    package_dir={"promptvault": "src"},
     packages=["promptvault", "promptvault.vault"],
     classifiers=[
         "Programming Language :: Python :: 3",

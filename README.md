@@ -86,7 +86,7 @@ print(templates)
 You can create new types of prompt templates by extending the `BaseTemplate` class. Define a new class that inherits from `BaseTemplate` and customize the `template` attribute or add any additional attributes or methods specific to that template type:
 
 ```python
-from promptvault.template import BaseTemplate
+from PromptVault.template import BaseTemplate
 
 class TemplateTest(BaseTemplate):
     template = "Hello, {name}!"

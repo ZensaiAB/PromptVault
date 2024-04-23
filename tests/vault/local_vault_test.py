@@ -1,7 +1,7 @@
 import os
 import pytest
-from src.vault import LocalVault
-from src.template import BaseTemplate, register_template
+from promptvault.vault import LocalVault
+from promptvault.template import BaseTemplate, register_template
 
 
 @pytest.fixture
