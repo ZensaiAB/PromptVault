@@ -1,8 +1,13 @@
 # tests/test_template_utils.py
 import os
 import pytest
+<<<<<<< HEAD
 from promptvault.template import BaseTemplate
 from promptvault import get_template, save_template, list_templates
+=======
+from src.template import BaseTemplate
+from src.template_utils import get_template, save_template, list_templates
+>>>>>>> dev
 
 
 @pytest.fixture

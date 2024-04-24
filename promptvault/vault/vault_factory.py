@@ -1,5 +1,5 @@
 import os
-from promptvault.vault.local_vault import LocalVault
+from .local_vault import LocalVault
 
 
 def create_vault():

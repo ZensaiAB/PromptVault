@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field, asdict, fields
+from string import Template
 import json
 import re
-
 
 def register_template(cls):
     """Decorator to register template classes in the TemplateRegistry."""
@@ -15,28 +15,35 @@ class TemplateRegistry:
     @classmethod
     def register_class(cls, template_class):
         cls.registry[template_class.__name__] = template_class
-
+        print(
+            f"Registered classes: {list(cls.registry.keys())}"
+        )
     @classmethod
     def get_class(cls, class_name):
-        print(
-            f"Looking for class: {class_name}, available: {list(cls.registry.keys())}"
-        )
         return cls.registry.get(class_name)
-
-
+    
 @register_template
 @dataclass
 class BaseTemplate:
+
     template: str = field(default_factory=str)
     version: str = "1.0"  # Default version
     class_name: str = field(init=False)
 
+
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        TemplateRegistry.register_class(cls)
+
     def __post_init__(self):
         self.class_name = self.__class__.__name__
+
 
     def to_prompt(self, **kwargs) -> str:
         """Generates the final prompt by dynamically inserting provided keyword arguments into the template."""
         # Check if all required variables are present in kwargs
+        template = self.template
         required_variables = self.variables
         missing_variables = [var for var in required_variables if var not in kwargs]
 
@@ -46,9 +53,14 @@ class BaseTemplate:
                 f"Missing required arguments for template placeholders: {', '.join(missing_variables)}.\n"
                 f"Expected variables are: {', '.join(required_variables)}."
             )
+        sub = {}
+        for req in required_variables:
+            template = template.replace("{"+req+"}", "$"+req)
+            sub[req] = kwargs[req]
 
+        tpl = Template(template)
         try:
-            return self.template.format(**kwargs)
+            return tpl.safe_substitute(sub)#self.template.format(**kwargs)
         except KeyError as e:
             # This handles cases where there's a typo or mismatch in variable names,
             # though it should be largely preempted by the above check.
@@ -76,8 +88,8 @@ class BaseTemplate:
                 field_data[field.name] = data.pop(field.name)
 
         # Create the instance with the remaining data
+        
         instance = target_class(**data)
-
         # Set the field attributes
         for name, value in field_data.items():
             setattr(instance, name, value)
@@ -104,11 +116,11 @@ class BaseTemplate:
             json_str = file.read()
         return cls.from_json(json_str)
 
-    def update_version(self, major=False, minor=False, patch=True):
+    def update_version(self, major=False, minor=True):# , patch=True):
         version_parts = self.version.split(".")
         major_num = int(version_parts[0])
         minor_num = int(version_parts[1]) if len(version_parts) > 1 else 0
-        patch_num = int(version_parts[2]) if len(version_parts) > 2 else 0
+        # patch_num = int(version_parts[2]) if len(version_parts) > 2 else 0
 
         if major:
             major_num += 1
@@ -117,7 +129,7 @@ class BaseTemplate:
         elif minor:
             minor_num += 1
             patch_num = 0
-        elif patch:
-            patch_num += 1
+        # elif patch:
+        #     patch_num += 1
 
         self.version = f"{major_num}.{minor_num}"

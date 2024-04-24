@@ -15,10 +15,13 @@ This program provides a convenient way to manage and version prompt templates fo
 
 1. Clone the repository:
    ```
-   git clone https://github.com/ZensaiAB/PromptValut.git
+   git clone https://github.com/ZensaiAB/PromptVault.git
    ```
-
-2. Install the package:
+2. Change directory:
+   ```
+   cd promptvault
+   ```
+3. Install the package:
    ```
    pip install .
    ```
@@ -56,8 +59,8 @@ To retrieve a prompt template from the vault, use the `get_template` function. Y
 from promptvault.template_utils import get_template
 
 retrieved_template = get_template("BaseTemplate")
-retrieved_template = get_template("BaseTemplate", version="1.0")
-retrieved_template = get_template("BaseTemplate", version="1.0", vault_folder="chatbot_templates")
+retrieved_template = get_template("BaseTemplate", version="1.0.0")
+retrieved_template = get_template("BaseTemplate", version="1.0.0", vault_folder="chatbot_templates")
 ```
 
 ### Updating a Prompt Template Version
@@ -86,13 +89,29 @@ print(templates)
 You can create new types of prompt templates by extending the `BaseTemplate` class. Define a new class that inherits from `BaseTemplate` and customize the `template` attribute or add any additional attributes or methods specific to that template type:
 
 ```python
+<<<<<<< HEAD
 from PromptVault.template import BaseTemplate
+=======
+from promptvault.template import BaseTemplate
+from dataclasses import dataclass
+>>>>>>> dev
 
+@dataclass
 class TemplateTest(BaseTemplate):
     template = "Hello, {name}!"
 ```
 
-The new template class will inherit all the functionality of the `BaseTemplate` class, and you can use it in the same way as the base class.
+The new template class will inherit all the functionality of the `BaseTemplate` class, and you can use it in the same way as the base class. @dataclass is necessary when adding new or changing attributes. Alternative:
+
+```python
+from promptvault.template import BaseTemplate
+from dataclasses import dataclass
+
+class TemplateTest(BaseTemplate):
+   pass
+
+template = TemplateTest("Hello, {name}!")
+```
 
 ### Customizing the Vault
 
@@ -114,7 +133,7 @@ Here are a few examples of how to use the prompt template management program for
 
 2. Retrieving a prompt template for a specific version and folder:
    ```python
-   retrieved_template = get_template("CustomerSupportTemplate", version="1.2", vault_folder="chatbot_templates")
+   retrieved_template = get_template("CustomerSupportTemplate", version="1.2.0", vault_folder="chatbot_templates")
    prompt = retrieved_template.to_prompt(name="John")
    print(prompt)
    ```
@@ -129,6 +148,7 @@ Here are a few examples of how to use the prompt template management program for
 
 4. Creating a new prompt template class:
    ```python
+   @dataclass
    class GreetingTemplate(BaseTemplate):
        template = "Hello, {name}! Welcome to our service."
 
