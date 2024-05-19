@@ -50,11 +50,31 @@ def test_json_serialization():
     assert new_bt.class_name == "BaseTemplate"
 
 
-# Test saving to and loading from a file
-def test_save_load_file(tmp_path, sample_template):
+# Test YAML serialization and deserialization
+def test_yaml_serialization():
+    bt = BaseTemplate(template="Goodbye, {name}.", version="1.2")
+    yaml_str = bt.to_yaml()
+    new_bt = BaseTemplate.from_yaml(yaml_str)
+    assert new_bt.template == "Goodbye, {name}."
+    assert new_bt.version == "1.2"
+    assert new_bt.class_name == "BaseTemplate"
+
+
+# Test saving to and loading from a JSON file
+def test_save_load_json_file(tmp_path, sample_template):
     file_path = tmp_path / "template.json"
-    sample_template.save_to_file(str(file_path))
-    loaded_template = BaseTemplate.load_from_file(str(file_path))
+    sample_template.save_to_file(str(file_path), format='json')
+    loaded_template = BaseTemplate.load_from_file(str(file_path), format='json')
+    assert loaded_template.template == sample_template.template
+    assert loaded_template.version == sample_template.version
+    assert loaded_template.class_name == sample_template.class_name
+
+
+# Test saving to and loading from a YAML file
+def test_save_load_yaml_file(tmp_path, sample_template):
+    file_path = tmp_path / "template.yaml"
+    sample_template.save_to_file(str(file_path), format='yaml')
+    loaded_template = BaseTemplate.load_from_file(str(file_path), format='yaml')
     assert loaded_template.template == sample_template.template
     assert loaded_template.version == sample_template.version
     assert loaded_template.class_name == sample_template.class_name
@@ -76,6 +96,16 @@ def test_subclass_json_serialization(test_prompt):
     json_str = test_prompt.to_json()
     print(json_str)
     loaded_prompt = PromptTest.from_json(json_str)
+    assert isinstance(loaded_prompt, PromptTest)
+    assert loaded_prompt.template == "Hello, {name}!"
+    assert loaded_prompt.extra_field == "Extra Data"
+    assert loaded_prompt.class_name == "PromptTest"
+
+
+def test_subclass_yaml_serialization(test_prompt):
+    yaml_str = test_prompt.to_yaml()
+    print(yaml_str)
+    loaded_prompt = PromptTest.from_yaml(yaml_str)
     assert isinstance(loaded_prompt, PromptTest)
     assert loaded_prompt.template == "Hello, {name}!"
     assert loaded_prompt.extra_field == "Extra Data"
