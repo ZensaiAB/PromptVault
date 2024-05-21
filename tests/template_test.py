@@ -63,8 +63,8 @@ def test_yaml_serialization():
 # Test saving to and loading from a JSON file
 def test_save_load_json_file(tmp_path, sample_template):
     file_path = tmp_path / "template.json"
-    sample_template.save_to_file(str(file_path), format='json')
-    loaded_template = BaseTemplate.load_from_file(str(file_path), format='json')
+    sample_template.save_to_file(str(file_path), format="json")
+    loaded_template = BaseTemplate.load_from_file(str(file_path), format="json")
     assert loaded_template.template == sample_template.template
     assert loaded_template.version == sample_template.version
     assert loaded_template.class_name == sample_template.class_name
@@ -73,8 +73,8 @@ def test_save_load_json_file(tmp_path, sample_template):
 # Test saving to and loading from a YAML file
 def test_save_load_yaml_file(tmp_path, sample_template):
     file_path = tmp_path / "template.yaml"
-    sample_template.save_to_file(str(file_path), format='yaml')
-    loaded_template = BaseTemplate.load_from_file(str(file_path), format='yaml')
+    sample_template.save_to_file(str(file_path), format="yaml")
+    loaded_template = BaseTemplate.load_from_file(str(file_path), format="yaml")
     assert loaded_template.template == sample_template.template
     assert loaded_template.version == sample_template.version
     assert loaded_template.class_name == sample_template.class_name

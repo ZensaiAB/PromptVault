@@ -4,10 +4,12 @@ from string import Template
 import json
 import re
 
+
 def register_template(cls):
     """Decorator to register template classes in the TemplateRegistry."""
     TemplateRegistry.register_class(cls)
     return cls
+
 
 class TemplateRegistry:
     registry = {}
@@ -20,7 +22,8 @@ class TemplateRegistry:
     @classmethod
     def get_class(cls, class_name):
         return cls.registry.get(class_name)
-    
+
+
 @register_template
 @dataclass
 class BaseTemplate:
@@ -49,7 +52,7 @@ class BaseTemplate:
             )
         sub = {}
         for req in required_variables:
-            template = template.replace("{"+req+"}", "$"+req)
+            template = template.replace("{" + req + "}", "$" + req)
             sub[req] = kwargs[req]
 
         tpl = Template(template)
@@ -94,7 +97,11 @@ class BaseTemplate:
         if target_class is None:
             target_class = BaseTemplate
 
-        field_data = {field.name: data.pop(field.name) for field in fields(target_class) if field.name in data}
+        field_data = {
+            field.name: data.pop(field.name)
+            for field in fields(target_class)
+            if field.name in data
+        }
         instance = target_class(**data)
         for name, value in field_data.items():
             setattr(instance, name, value)
@@ -116,18 +123,18 @@ class BaseTemplate:
         pattern = re.compile(r"\{(\w+)\}")
         return list(set(pattern.findall(self.template)))
 
-    def save_to_file(self, file_path: str, format='yaml') -> None:
+    def save_to_file(self, file_path: str, format="yaml") -> None:
         with open(file_path, "w") as file:
-            if format == 'yaml':
+            if format == "yaml":
                 file.write(self.to_yaml())
             else:
                 file.write(self.to_json())
 
     @classmethod
-    def load_from_file(cls, file_path: str, format='yaml'):
+    def load_from_file(cls, file_path: str, format="yaml"):
         with open(file_path, "r") as file:
             content = file.read()
-            if format == 'yaml':
+            if format == "yaml":
                 return cls.from_yaml(content)
             else:
                 return cls.from_json(content)

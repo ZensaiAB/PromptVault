@@ -1,5 +1,6 @@
 from .vault.vault_factory import create_vault
 
+
 def get_template(template_name, version=None, **kwargs):
     vault = create_vault()
     return vault.load(template_name, version, **kwargs)

@@ -1,6 +1,5 @@
 # local_vault.py
 import os
-import json
 from .vault import Vault
 from ..template import BaseTemplate, TemplateRegistry
 
@@ -18,13 +17,13 @@ class LocalVault(Vault):
             template_name = template.class_name
         template_dir = os.path.join(self.vault_path, template_name)
         os.makedirs(template_dir, exist_ok=True)
-        file_name = f"{version}.json"
+        file_name = f"{version}.yaml"
         file_path = os.path.join(template_dir, file_name)
         if os.path.isfile(file_path):
-            file_name = f"{template.update_version()}.json"
+            file_name = f"{template.update_version()}.yaml"
             file_path = os.path.join(template_dir, file_name)
         with open(file_path, "w") as file:
-            file.write(template.to_json())
+            file.write(template.to_yaml())
 
     def load(self, template_name, version=None):
         template_folder = self.vault_path
@@ -36,14 +35,14 @@ class LocalVault(Vault):
             )
 
         if version is None:
-            versions = [f[:-5] for f in os.listdir(template_dir) if f.endswith(".json")]
+            versions = [f[:-5] for f in os.listdir(template_dir) if f.endswith(".yaml")]
             if not versions:
                 raise FileNotFoundError(
                     f"No versions found for template '{template_name}'."
                 )
             version = max(versions)
 
-        file_name = f"{version}.json"
+        file_name = f"{version}.yaml"
         file_path = os.path.join(template_dir, file_name)
         if not os.path.exists(file_path):
             raise FileNotFoundError(
@@ -51,7 +50,7 @@ class LocalVault(Vault):
             )
 
         with open(file_path, "r") as file:
-            json_str = file.read()
+            template_str = file.read()
         template_class = TemplateRegistry.get_class(template_name)
         if template_class is None:
             print(
@@ -59,7 +58,7 @@ class LocalVault(Vault):
             )
             template_class = BaseTemplate
 
-        return template_class.from_json(json_str)
+        return template_class.from_yaml(template_str)
 
     def list_templates(self):
         templates = []
@@ -68,7 +67,7 @@ class LocalVault(Vault):
             template_dir = os.path.join(template_folder, template_name)
             if os.path.isdir(template_dir):
                 versions = [
-                    f[:-5] for f in os.listdir(template_dir) if f.endswith(".json")
+                    f[:-5] for f in os.listdir(template_dir) if f.endswith(".yaml")
                 ]
                 templates.append((template_name, versions))
         return templates
