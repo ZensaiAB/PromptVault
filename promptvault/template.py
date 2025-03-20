@@ -132,7 +132,7 @@ class BaseTemplate:
 
     @classmethod
     def load_from_file(cls, file_path: str, format="yaml"):
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding='utf-8') as file:
             content = file.read()
             if format == "yaml":
                 return cls.from_yaml(content)
@@ -151,3 +151,7 @@ class BaseTemplate:
             minor_num += 1
 
         self.version = f"{major_num}.{minor_num}"
+
+    @property
+    def metadata(self):
+        return {"template": self.class_name, "version": self.version}

@@ -49,7 +49,7 @@ class LocalVault(Vault):
                 f"Version '{version}' not found for template '{template_name}'."
             )
 
-        with open(file_path, "r") as file:
+        with open(file_path, "r", encoding='utf-8') as file:
             template_str = file.read()
         template_class = TemplateRegistry.get_class(template_name)
         if template_class is None:
